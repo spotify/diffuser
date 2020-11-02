@@ -1,0 +1,8 @@
+Diffuser
+Copyright 2020 Spotify AB
+
+This project uses QuickTheories/QuickTheories from QuickTheories:
+https://github.com/quicktheories/QuickTheories
+
+This project uses typelift/SwiftCheck from TypeLift:
+https://github.com/typelift/SwiftCheck
