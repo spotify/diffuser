@@ -39,6 +39,7 @@ class AnonymousDisposableTests: XCTestCase {
         }
 
         XCTAssertFalse(disposeCalled)
+        XCTAssertNotNil(anonymousDisposable)
         anonymousDisposable = nil
         XCTAssertTrue(disposeCalled)
     }
