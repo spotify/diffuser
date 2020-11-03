@@ -67,7 +67,7 @@ public struct Diffuser<A> {
         }
 
         func run(_ newValue: A) {
-            if shouldRunWithNewValue(newValue) {
+            if !shouldRunWithNewValue(newValue) {
                 effect(newValue)
             }
             cache = newValue
