@@ -21,9 +21,11 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Diffuser",
-            dependencies: []),
+            dependencies: [],
+            path: "./swift/Diffuser/Sources/Diffuser"),
         .testTarget(
             name: "DiffuserTests",
-            dependencies: ["Diffuser", "SwiftCheck"]),
+            dependencies: ["Diffuser", "SwiftCheck"],
+            path: "./swift/Diffuser/Tests/DiffuserTests"),
     ]
 )
