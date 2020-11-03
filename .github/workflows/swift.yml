@@ -2,19 +2,18 @@ name: Swift
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ci-swift ]
   pull_request:
     branches: [ master, ci-swift ]
 
 jobs:
   build:
-
     runs-on: macos-latest
 
-    steps:
+    env:
+      working-directory: ./swift/Diffuser
 
-    - name: Navigate to Swift Package
-      run: cd swift/Diffuser
+    steps:
 
     - name: Generate Project
       run: swift package generate-xcodeproj
