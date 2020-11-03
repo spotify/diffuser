@@ -54,7 +54,7 @@ public final class Diffuser<A> {
     this.effect =
         value -> {
           A cachedValue = cache.get();
-          if (cachedValue == null || didChange.test(cachedValue, value)) {
+          if (!(cachedValue == null || didChange.test(cachedValue, value))) {
             sideEffect.run(value);
           }
           cache.set(value);
