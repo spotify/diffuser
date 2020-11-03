@@ -1,0 +1,21 @@
+name: Swift
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, ci-swift ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    - name: Navigate to Swift Package
+    run: cd swift/Diffuser
+
+    - name: Generate Project
+    run: swift package generate-xcodeproj
+
+    - name: Run Tests on an iPhone
+    run: xcodebuild test -destination 'name=iPhone 11' -scheme 'Diffuser-Package'
