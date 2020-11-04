@@ -1,1 +1,7 @@
 *.DS_STORE
+.DS_Store
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
+
