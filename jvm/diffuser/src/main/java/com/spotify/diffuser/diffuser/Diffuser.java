@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -54,7 +53,8 @@ public final class Diffuser<A> {
 
     this.effect =
         value -> {
-          if (didChange.test(cache.get(), value)) {
+          A cachedValue = cache.get();
+          if (cachedValue == null || didChange.test(cachedValue, value)) {
             sideEffect.run(value);
           }
           cache.set(value);
@@ -226,6 +226,6 @@ public final class Diffuser<A> {
   }
 
   private static <A> boolean notEqual(A a, A b) {
-    return !Objects.equals(b, a);
+    return !b.equals(a);
   }
 }
