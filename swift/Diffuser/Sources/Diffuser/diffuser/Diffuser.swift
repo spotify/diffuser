@@ -49,10 +49,6 @@ public struct Diffuser<A> {
         self.effect(newValue)
     }
 
-    static func notEqual<A: Equatable>(a: A, b: A) -> Bool {
-        return a != b
-    }
-
     init(
         effect: @escaping Effect<A>,
         didChange: @escaping DidChange<A>
@@ -98,5 +94,9 @@ extension Diffuser where A: Equatable {
             children.forEach { diffuser in diffuser.run(newValue) }
         }
         self.init(effect: effect, didChange: Diffuser.notEqual)
+    }
+
+    static func notEqual(a: A, b: A) -> Bool {
+        return a != b
     }
 }
