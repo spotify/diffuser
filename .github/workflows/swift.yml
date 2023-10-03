@@ -12,12 +12,9 @@ jobs:
     runs-on: macos-latest
 
     steps:
-
-    - uses: actions/checkout@v2
-
-    - name: Generate Project
-      run: swift package generate-xcodeproj
-
-    - name: Run Tests on an iPhone
-      run: xcodebuild test -destination 'name=iPhone 11' -scheme 'Diffuser-Package'
-
+      - uses: actions/checkout@v4
+      - uses: swift-actions/setup-swift@v1.25.0
+        with:
+          swift-version: "5.9"
+      - name: Run tests
+        run: swift test
