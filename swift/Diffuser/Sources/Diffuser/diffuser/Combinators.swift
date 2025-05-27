@@ -31,6 +31,38 @@ public extension Diffuser {
         return Diffuser(effect: effect)
     }
 
+    /// Create a Diffuser which merges a list of Diffusers and always executes them regardless of the value.
+    ///
+    /// This function is useful as a building block for more complex Diffusers, but it is unlikely that you would use
+    /// it on its own. Consider using `into` instead.
+    ///
+    /// - Parameter children: The list of Diffusers to merge
+    /// - Returns: A merged Diffuser which forwards any values it is `run` with to all
+    /// its children.
+    static func intoAlways(
+        _ children: [Diffuser<A>]
+    ) -> Diffuser<A> {
+        .intoAlways { value in
+            for child in children {
+                child.run(value)
+            }
+        }
+    }
+
+    /// Create a Diffuser which merges a list of Diffusers and always executes them regardless of the value.
+    ///
+    /// This function is useful as a building block for more complex Diffusers, but it is unlikely that you would use
+    /// it on its own. Consider using `into` instead.
+    ///
+    /// - Parameter children: The list of Diffusers to merge
+    /// - Returns: A merged Diffuser which forwards any values it is `run` with to all
+    /// its children.
+    static func intoAlways(
+        _ children: Diffuser<A>...
+    ) -> Diffuser<A> {
+        .intoAlways(children)
+    }
+
     /// Add an additional layer of caching to an existing Diffuser.
     ///
     /// This function is useful as a building block for more complex Diffusers, but it is unlikely that you would use

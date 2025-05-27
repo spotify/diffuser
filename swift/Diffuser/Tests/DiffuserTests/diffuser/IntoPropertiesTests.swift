@@ -107,6 +107,88 @@ class IntoPropertiesTest: XCTestCase {
             )
     }
 
+    func testIntoAlwaysList() {
+        property("Running `intoAlways` on a list of `intoAlways` Diffusers is the same as running a list of `intoAlways` Diffusers individually in order") <-
+        forAll(integerLists, integersBetween0And10) { input, d in
+            var outputLhs: [Int] = []
+            let range = (0...d)
+            let diffusersListLhs = range.map { (i: Int) -> Diffuser<Int> in
+                let diffuser: Diffuser<Int> = .intoAlways { _ in outputLhs.append(i) }
+                return diffuser
+            }
+
+            var outputRhs: [Int] = []
+            let diffusersListRhs = range.map { (i: Int) -> Diffuser<Int> in
+                let diffuser: Diffuser<Int> = .intoAlways { _ in outputRhs.append(i) }
+                return diffuser
+            }
+            let diffuserRhs = Diffuser.intoAlways(diffusersListRhs)
+
+            input.forEach { value in
+                diffusersListLhs.forEach { diffuser in diffuser.run(value) }
+
+                diffuserRhs.run(value)
+            }
+
+            XCTAssertEqual(outputRhs, outputLhs)
+            return outputLhs == outputRhs
+        }
+    }
+
+    func testIntoAlwaysListMapInto_intoAllMapInto_equivalence() {
+        property("Running `intoAlways` on a list of `map -> into` Diffusers is the same as running `intoAll` on a list of `map -> into` Diffusers") <-
+        forAll(integerLists, integersBetween0And10) { input, d in
+            var outputLhs: [Int] = []
+            let diffuserLhs: Diffuser<Int> = .intoAlways(
+                .map(\.bitWidth, .into { _ in outputLhs.append(d) }),
+                .map({ $0 * 2 }, .into { _ in outputLhs.append(d + 1) }),
+                .map({ $0 % 2 == 0 }, .into { _ in outputLhs.append(d + 2) })
+            )
+
+            var outputRhs: [Int] = []
+            let diffuserRhs: Diffuser<Int> = .intoAll(
+                .map(\.bitWidth, .into { _ in outputRhs.append(d) }),
+                .map({ $0 * 2 }, .into { _ in outputRhs.append(d + 1) }),
+                .map({ $0 % 2 == 0 }, .into { _ in outputRhs.append(d + 2) })
+            )
+
+            input.forEach { value in
+                diffuserLhs.run(value)
+                diffuserRhs.run(value)
+            }
+
+            XCTAssertEqual(outputRhs, outputLhs)
+
+            input.forEach { value in
+                diffuserLhs.run(value)
+                diffuserRhs.run(value)
+            }
+
+            XCTAssertEqual(outputRhs, outputLhs)
+
+            input.forEach { value in
+                diffuserLhs.run(value + 1)
+                diffuserRhs.run(value + 1)
+            }
+
+            XCTAssertEqual(outputRhs, outputLhs)
+
+            return outputLhs == outputRhs
+        }
+    }
+
+    func testIntoAlwaysWithVarArgsIsSameAsIntoAlwaysWithList() {
+        property("intoAll with varargs is the same as intoAll with list") <-
+        // intoAlways(a, a, a) == intoAlways([a, a, a])
+        diffusersBehaveTheSame(
+            formula(
+                lhs: { diffuser in .intoAlways(diffuser, diffuser, diffuser) },
+                rhs: { diffuser in .intoAlways([diffuser, diffuser, diffuser]) }
+            )
+        )
+    }
+
+
     func testDiffuserInitializerWithListIsSameAsIntoAllWithList() {
         property("Diffuser initializer with list is the same as intoAll with list") <-
             // Diffuser([a, a, a]) == intoAll([a, a, a])
