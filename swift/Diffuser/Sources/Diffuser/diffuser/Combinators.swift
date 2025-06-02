@@ -31,6 +31,68 @@ public extension Diffuser {
         return Diffuser(effect: effect)
     }
 
+    /// Create a Diffuser which merges a list of Diffusers and always executes them regardless of the value.
+    ///
+    /// This function is useful as a building block for more complex Diffusers when using non-`Equatable` values
+    /// that have `Equatable` members. If the value is `Equatable`, consider using `intoAll` instead.
+    ///
+    /// For example, using this function it is possible to create composite Diffusers without conforming the model
+    /// to `Equatable`:
+    ///
+    /// ```Swift
+    /// struct Model {
+    ///     let a: String
+    ///     let b: String
+    /// }
+    ///
+    /// let diffuser: Diffuser<Model> = .intoAlways([
+    ///    .map(\.a, .into { a in /* ... */ }),
+    ///    .map(\.b, .into { b in /* ... */ }),
+    /// ])
+    /// ```
+    ///
+    /// - Parameter children: The list of Diffusers to merge.
+    /// - Returns: A merged Diffuser which forwards any values it is `run` with to all
+    /// its children.
+    static func intoAlways(
+        _ children: [Diffuser<A>]
+    ) -> Diffuser<A> {
+        .intoAlways { value in
+            for child in children {
+                child.run(value)
+            }
+        }
+    }
+
+    /// Create a Diffuser which merges a list of Diffusers and always executes them regardless of the value.
+    ///
+    /// This function is useful as a building block for more complex Diffusers when using non-`Equatable` values
+    /// that have `Equatable` members. If the value is `Equatable`, consider using `intoAll` instead.
+    ///
+    /// For example, using this function it is possible to create composite Diffusers without conforming the model
+    /// to `Equatable`:
+    ///
+    /// ```Swift
+    /// struct Model {
+    ///     let a: String
+    ///     let b: String
+    /// }
+    ///
+    /// let diffuser: Diffuser<Model> = .intoAlways(
+    ///    .map(\.a, .into { a in /* ... */ }),
+    ///    .map(\.b, .into { b in /* ... */ })
+    /// )
+    /// ```
+    ///
+    /// - Parameter children: The list of Diffusers to merge.
+    /// - Returns: A merged Diffuser which forwards any values it is `run` with to all
+    /// its children.
+    static func intoAlways(
+        _ children: Diffuser<A>...
+    ) -> Diffuser<A> {
+        .intoAlways(children)
+    }
+
     /// Add an additional layer of caching to an existing Diffuser.
     ///
     /// This function is useful as a building block for more complex Diffusers, but it is unlikely that you would use
